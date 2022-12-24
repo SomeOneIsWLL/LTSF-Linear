@@ -29,7 +29,7 @@ def adjust_learning_rate(optimizer, epoch, args):
             param_group['lr'] = lr
         print('Updating learning rate to {}'.format(lr))
 
-
+#看看损失函数数值，（假如是一直提升的）是不是需要提前结束了
 class EarlyStopping:
     def __init__(self, patience=7, verbose=False, delta=0):
         self.patience = patience

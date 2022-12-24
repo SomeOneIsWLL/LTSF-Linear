@@ -35,6 +35,7 @@ class Exp_Main(Exp_Basic):
 
         if self.args.use_multi_gpu and self.args.use_gpu:
             model = nn.DataParallel(model, device_ids=self.args.device_ids)
+        print(model)
         return model
 
     def _get_data(self, flag):
@@ -125,7 +126,7 @@ class Exp_Main(Exp_Basic):
                 iter_count += 1
                 model_optim.zero_grad()
                 batch_x = batch_x.float().to(self.device)
-
+                #batch_x.shape[32,96,7]
                 batch_y = batch_y.float().to(self.device)
                 batch_x_mark = batch_x_mark.float().to(self.device)
                 batch_y_mark = batch_y_mark.float().to(self.device)
@@ -159,10 +160,15 @@ class Exp_Main(Exp_Basic):
                             
                         else:
                             outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark, batch_y)
-                    # print(outputs.shape,batch_y.shape)
+                    # print("\t之前",outputs.shape,batch_y.shape)
+                    # 之前 torch.Size([32, 96, 7]) torch.Size([32, 144, 7])
                     f_dim = -1 if self.args.features == 'MS' else 0
                     outputs = outputs[:, -self.args.pred_len:, f_dim:]
+                    # barch_y为什么要加？因为在data_loader.py里面，多了一个lable_len,对于Linear模型来说label_len是没有用的。
+                    # 所以要用负分片，f_dim是看是否预测多变量，=0的话就是多变量，等于-1的话就是单变量
                     batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
+                    # print("\t之后",outputs.shape, batch_y.shape)
+                    # 之后 torch.Size([32, 96, 7]) torch.Size([32, 96, 7])
                     loss = criterion(outputs, batch_y)
                     train_loss.append(loss.item())
 

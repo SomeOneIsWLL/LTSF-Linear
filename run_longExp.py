@@ -32,6 +32,7 @@ parser.add_argument('--checkpoints', type=str, default='./checkpoints/', help='l
 # forecasting task
 parser.add_argument('--seq_len', type=int, default=96, help='input sequence length')
 parser.add_argument('--label_len', type=int, default=48, help='start token length')
+##这个 lable_len好像不关Linear模型的事情，是Transformer里面的参数
 parser.add_argument('--pred_len', type=int, default=96, help='prediction sequence length')
 
 
@@ -60,7 +61,8 @@ parser.add_argument('--output_attention', action='store_true', help='whether to 
 parser.add_argument('--do_predict', action='store_true', help='whether to predict unseen future data')
 
 # optimization
-parser.add_argument('--num_workers', type=int, default=10, help='data loader num workers')
+#默认是开启多线程来训练的，我因为是win训练所以改成了0（不使用多线程）
+parser.add_argument('--num_workers', type=int, default=0, help='data loader num workers')
 parser.add_argument('--itr', type=int, default=2, help='experiments times')
 parser.add_argument('--train_epochs', type=int, default=10, help='train epochs')
 parser.add_argument('--batch_size', type=int, default=32, help='batch size of train input data')
